@@ -128,7 +128,7 @@ jobs:
 workflows:
   version: 2.1
 
-  build_test_bump:
+  build_test:
     when:
       and:
         - equal: [main, << pipeline.git.branch >>]
@@ -141,7 +141,7 @@ workflows:
           requires:
             - install_app
 
-  build_test_bump_preview:
+  build_test_preview:
     unless:
       and:
         - equal: [main, << pipeline.git.branch >>]
