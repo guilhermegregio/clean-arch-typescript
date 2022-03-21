@@ -1,6 +1,6 @@
 {
   "name": "@creditas/person-classification",
-  "version": "0.0.5-preview-feat-test.3",
+  "version": "0.0.5",
   "main": "src/index.js",
   "bin": "./bin/cli.js",
   "repository": "git@github.com:Creditas/person-classification-frontend-sdk.git",
