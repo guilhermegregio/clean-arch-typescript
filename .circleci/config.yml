@@ -108,8 +108,9 @@ jobs:
                 yarn version --tag preview --preid preview-$CIRCLE_BRANCH --prerelease
                 ;;
             esac
-      - run: git pull --no-ff --no-commit
-      - run: git push --quiet
+      - run: git pull --no-ff --no-commit origin main
+      - run: git pull --no-ff --no-commit origin $CIRCLE_BRANCH
+      - run: git push --quiet origin $CIRCLE_BRANCH
       - run: git push --tags
 
   publish_packages:
@@ -122,7 +123,7 @@ jobs:
       - run:
           name: Publish package 🚀
           command: |
-            yarn publish --registry https://creditas.jfrog.io/creditas/api/npm/npm/ --dry-run
+            yarn publish --registry https://creditas.jfrog.io/creditas/api/npm/npm/
 
 workflows:
   version: 2.1
@@ -160,7 +161,7 @@ workflows:
           filters:
             tags:
               only:
-                - /^v\d\.\d\.\d\w{0,5}$/
+                - /^v.*$/
             branches:
               ignore:
                 - /.*/
@@ -172,7 +173,7 @@ workflows:
           filters:
             tags:
               only:
-                - /^v\d\.\d\.\d\w{0,5}$/
+                - /^v.*$/
             branches:
               ignore:
                 - /.*/
