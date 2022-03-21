@@ -1,0 +1,181 @@
+version: 2.1
+
+working_directory: &working_directory ~/app
+
+executors:
+  default:
+    parameters:
+      version:
+        description: 'version tag'
+        default: '16.13.0-browsers'
+        type: string
+    docker:
+      - image: cimg/node:<<parameters.version>>
+        environment:
+          JOBS: 2
+    working_directory: *working_directory
+
+aliases: &attach_working_directory
+  attach_workspace:
+    at: *working_directory
+
+commands:
+  configure_git:
+    steps:
+      - run:
+          name: Configure GIT
+          command: |
+            git config --global -l
+            git config --global user.email dev@bankfacil.com.br
+            git config --global user.name RoboBankFacil
+
+  restore_packages:
+    steps:
+      - restore_cache:
+          name: Restore Yarn Package Cache 📁
+          keys:
+            - yarn-packages-v3-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            - yarn-packages-v3-{{ .Branch }}-
+            - yarn-packages-v3-
+
+  save_packages:
+    steps:
+      - save_cache:
+          name: Save Yarn Package Cache 📁
+          key: yarn-packages-v3-{{ .Branch }}-{{ checksum "yarn.lock" }}
+          paths:
+            - node_modules
+
+  authenticate_with_registry:
+    steps:
+      - run:
+          name: Authenticate with registry 🔐
+          command: |
+            echo "@creditas:registry=https://creditas.jfrog.io/creditas/api/npm/npm/
+            //creditas.jfrog.io/creditas/api/npm/npm/:_authToken=$NPM_TOKEN
+            @creditas-ui:registry=https://creditas.jfrog.io/creditas/api/npm/npm/" > ~/.npmrc
+
+  install_packages:
+    steps:
+      - run:
+          name: Install project dependencies 📦
+          command: yarn install --frozen-lockfile
+
+jobs:
+  install_app:
+    executor: default
+    steps:
+      - checkout
+      - restore_packages
+      - authenticate_with_registry
+      - install_packages
+      - save_packages
+      - configure_git
+      - *attach_working_directory
+      - persist_to_workspace:
+          root: *working_directory
+          paths:
+            - node_modules
+
+  bump_version:
+    executor: default
+    parameters:
+      preview:
+        default: false
+        type: boolean
+    steps:
+      - checkout
+      - *attach_working_directory
+      - configure_git
+      - add_ssh_keys: &add_ssh_keys
+          fingerprints:
+            - '37:92:7b:e1:e7:1e:54:8c:c6:e5:1c:4b:bf:b3:6c:44'
+      - authenticate_with_registry
+      - run:
+          name: Bump version package 🚀
+          command: |
+            case "<<parameters.preview>>" in
+              "false")
+                if [[ ${CIRCLE_BRANCH,,} =~ (major) ]]; then
+                  yarn version --major
+                elif [[ ${CIRCLE_BRANCH,,} =~ (minor) ]]; then
+                  yarn version --minor
+                else
+                  yarn version --patch
+                fi
+                ;;
+              "true")
+                yarn version --tag preview --preid preview-$CIRCLE_BRANCH --prerelease
+                ;;
+            esac
+      - run: git pull --no-ff --no-commit
+      - run: git push --quiet
+      - run: git push --tags
+
+  publish_packages:
+    executor: default
+    steps:
+      - checkout
+      - *attach_working_directory
+      - configure_git
+      - add_ssh_keys: &add_ssh_keys
+          fingerprints:
+            - '37:92:7b:e1:e7:1e:54:8c:c6:e5:1c:4b:bf:b3:6c:44'
+      - authenticate_with_registry
+      - run:
+          name: Publish package 🚀
+          command: |
+            yarn publish --registry https://creditas.jfrog.io/creditas/api/npm/npm/ --dry-run
+
+workflows:
+  version: 2.1
+
+  build_test_bump:
+    when:
+      and:
+        - equal: [main, << pipeline.git.branch >>]
+    jobs:
+      - install_app:
+          context: artifactory-dependency-install
+
+      - bump_version:
+          name: 'bump_version'
+          requires:
+            - install_app
+
+  build_test_bump_preview:
+    unless:
+      and:
+        - equal: [main, << pipeline.git.branch >>]
+    jobs:
+      - install_app:
+          context: artifactory-dependency-install
+      - bump_version:
+          name: 'bump_preview_version'
+          preview: true
+          requires:
+            - install_app
+
+  release:
+    jobs:
+      - install_app:
+          context: artifactory-dependency-install
+          filters:
+            tags:
+              only:
+                - /^v\d\.\d\.\d\w{0,5}$/
+            branches:
+              ignore:
+                - /.*/
+
+      - publish_packages:
+          context: artifactory-credentials
+          requires:
+            - install_app
+          filters:
+            tags:
+              only:
+                - /^v\d\.\d\.\d\w{0,5}$/
+            branches:
+              ignore:
+                - /.*/
