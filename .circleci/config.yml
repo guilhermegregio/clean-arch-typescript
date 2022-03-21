@@ -89,7 +89,7 @@ jobs:
       - configure_git
       - add_ssh_keys: &add_ssh_keys
           fingerprints:
-            - '6f:c8:5d:b2:1f:b3:1e:d9:c5:8e:a2:f5:a6:00:d1:71'
+            - 'd6:8b:d0:93:2f:20:1f:58:74:0c:cd:fe:83:48:50:fd'
       - authenticate_with_registry
       - run:
           name: Bump version package 🚀
