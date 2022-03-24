@@ -113,6 +113,22 @@ jobs:
       - run: git push --quiet origin $CIRCLE_BRANCH
       - run: git push --tags
 
+  build:
+    executor: default
+    steps:
+      - checkout
+      - *attach_working_directory
+      - run:
+          name: Build
+          command: |
+            yarn build
+      - persist_to_workspace:
+          root: *working_directory
+          paths:
+            - dist
+            - node_modules
+            - netlify.toml
+
   publish_packages:
     executor: default
     steps:
@@ -136,10 +152,14 @@ workflows:
       - install_app:
           context: artifactory-dependency-install
 
+      - build:
+          requires:
+            - install_app
+
       - bump_version:
           name: 'bump_version'
           requires:
-            - install_app
+            - build
 
   build_test_preview:
     unless:
@@ -148,11 +168,16 @@ workflows:
     jobs:
       - install_app:
           context: artifactory-dependency-install
+
+      - build:
+          requires:
+            - install_app
+
       - bump_version:
           name: 'bump_preview_version'
           preview: true
           requires:
-            - install_app
+            - build
 
   release:
     jobs:
@@ -166,10 +191,21 @@ workflows:
               ignore:
                 - /.*/
 
+      - build:
+          filters:
+            tags:
+              only:
+                - /^v.*$/
+            branches:
+              ignore:
+                - /.*/
+          requires:
+            - install_app
+
       - publish_packages:
           context: artifactory-credentials
           requires:
-            - install_app
+            - build
           filters:
             tags:
               only:

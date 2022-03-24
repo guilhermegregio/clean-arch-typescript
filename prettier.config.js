@@ -1,9 +1,20 @@
+'use strict'
+
 module.exports = {
-  bracketSpacing: true,
+  arrowParens: 'avoid',
+  bracketSpacing: false,
   endOfLine: 'lf',
-  printWidth: 100,
-  semi: true,
+  htmlWhitespaceSensitivity: 'css',
+  insertPragma: false,
+  jsxBracketSameLine: false,
+  jsxSingleQuote: false,
+  printWidth: 80,
+  proseWrap: 'always',
+  quoteProps: 'as-needed',
+  requirePragma: false,
+  semi: false,
   singleQuote: true,
   tabWidth: 2,
   trailingComma: 'all',
-};
+  useTabs: false,
+}
