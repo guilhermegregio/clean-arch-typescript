@@ -1,6 +1,6 @@
 {
   "name": "@creditas/person-classification",
-  "version": "0.0.9-preview-feat-PLE-1131-env-configs.1",
+  "version": "0.0.9",
   "repository": "git@github.com:Creditas/person-classification-frontend-sdk.git",
   "author": "Guilherme Mangabeira Gregio <guilherme.gregio@creditas.com.br>",
   "scripts": {
