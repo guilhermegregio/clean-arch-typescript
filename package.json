@@ -1,6 +1,6 @@
 {
   "name": "@creditas/person-classification",
-  "version": "0.0.10",
+  "version": "0.0.11-preview-feat-PLE-1134-structure-events.3",
   "repository": "git@github.com:Creditas/person-classification-frontend-sdk.git",
   "author": "Guilherme Mangabeira Gregio <guilherme.gregio@creditas.com.br>",
   "scripts": {
@@ -22,6 +22,7 @@
   },
   "devDependencies": {
     "@types/node": "^17.0.22",
+    "@types/ramda": "^0.28.4",
     "prettier": "^2.6.0",
     "typescript": "^4.6.2",
     "vite": "^2.8.6",
@@ -29,6 +30,7 @@
     "vite-plugin-linter": "^1.2.0"
   },
   "dependencies": {
-    "axios": "^0.26.1"
+    "axios": "^0.26.1",
+    "ramda": "^0.28.0"
   }
 }
