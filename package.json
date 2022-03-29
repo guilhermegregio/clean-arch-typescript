@@ -1,6 +1,6 @@
 {
   "name": "@creditas/person-classification",
-  "version": "0.0.9",
+  "version": "0.0.10-preview-feat-PLE-1176-add-fetcher.1",
   "repository": "git@github.com:Creditas/person-classification-frontend-sdk.git",
   "author": "Guilherme Mangabeira Gregio <guilherme.gregio@creditas.com.br>",
   "scripts": {
@@ -27,5 +27,8 @@
     "vite": "^2.8.6",
     "vite-plugin-dts": "^1.0.1",
     "vite-plugin-linter": "^1.2.0"
+  },
+  "dependencies": {
+    "axios": "^0.26.1"
   }
 }
