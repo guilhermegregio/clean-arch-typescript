@@ -1,6 +1,6 @@
 {
   "name": "@creditas/person-classification",
-  "version": "0.0.8-preview-docs-readme.0",
+  "version": "0.0.8",
   "repository": "git@github.com:Creditas/person-classification-frontend-sdk.git",
   "author": "Guilherme Mangabeira Gregio <guilherme.gregio@creditas.com.br>",
   "scripts": {
