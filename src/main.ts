@@ -1,11 +1,16 @@
-import packJson from '../package.json'
+import {setEnv, Environments} from './config/environment'
 
-const configure = () => {
-  const {name, version} = packJson
-
-  //eslint-disable-next-line no-console
-  console.log('Configure Person Classification', {name, version})
+type setupParams = {
+  environment: `${Environments}`
+  baseUrl?: string
 }
 
-export {configure}
-export default configure
+const setupPersonClassificationSdk = ({
+  environment,
+  baseUrl,
+}: setupParams): void => {
+  setEnv(environment as Environments, baseUrl ?? '')
+}
+
+export {setupPersonClassificationSdk}
+export default setupPersonClassificationSdk

@@ -39,7 +39,7 @@ let defaultEnv = Environments.development
 const setEnv = (environment: Environments, baseUrl: string) => {
   if (!Object.keys(environments).includes(environment)) {
     throw new Error(
-      'Invalid environment. Try production, staging, development or proxy',
+      'Invalid environment. Try production, staging, development or proxy.',
     )
   }
 
@@ -52,4 +52,4 @@ const setEnv = (environment: Environments, baseUrl: string) => {
 
 const getEnv = (key: Keys) => environments[defaultEnv][key]
 
-export {setEnv, getEnv}
+export {setEnv, getEnv, Environments}
