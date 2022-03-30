@@ -1,11 +1,12 @@
 {
   "name": "@creditas/person-classification",
-  "version": "0.0.13",
+  "version": "0.0.0-development",
   "repository": "git@github.com:Creditas/person-classification-frontend-sdk.git",
   "author": "Guilherme Mangabeira Gregio <guilherme.gregio@creditas.com.br>",
   "license": "UNLICENSED",
   "scripts": {
     "build": "tsc && vite build",
+    "semantic-release": "semantic-release",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "format": "prettier --write .",
     "check-format": "prettier --check ."
@@ -24,6 +25,9 @@
       "require": "./dist/person-classification.umd.js"
     }
   },
+  "publishConfig": {
+    "access": "restricted"
+  },
   "devDependencies": {
     "@types/node": "^17.0.22",
     "@types/ramda": "^0.28.4",
@@ -36,6 +40,7 @@
     "eslint-plugin-json": "^3.1.0",
     "eslint-plugin-prettier": "^4.0.0",
     "prettier": "^2.6.0",
+    "semantic-release": "^19.0.2",
     "typescript": "^4.6.2",
     "vite": "^2.8.6",
     "vite-plugin-dts": "^1.0.1"

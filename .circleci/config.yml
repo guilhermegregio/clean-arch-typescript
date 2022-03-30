@@ -77,12 +77,8 @@ jobs:
           paths:
             - node_modules
 
-  bump_version:
+  semantic_release:
     executor: default
-    parameters:
-      preview:
-        default: false
-        type: boolean
     steps:
       - checkout
       - *attach_working_directory
@@ -92,26 +88,8 @@ jobs:
             - 'd6:8b:d0:93:2f:20:1f:58:74:0c:cd:fe:83:48:50:fd'
       - authenticate_with_registry
       - run:
-          name: Bump version package 🚀
-          command: |
-            case "<<parameters.preview>>" in
-              "false")
-                if [[ ${CIRCLE_BRANCH,,} =~ (major) ]]; then
-                  yarn version --major
-                elif [[ ${CIRCLE_BRANCH,,} =~ (minor) ]]; then
-                  yarn version --minor
-                else
-                  yarn version --patch
-                fi
-                ;;
-              "true")
-                yarn version --tag preview --preid preview-$CIRCLE_BRANCH --prerelease
-                ;;
-            esac
-      - run: git pull --no-ff --no-commit origin main
-      - run: git pull --no-ff --no-commit origin $CIRCLE_BRANCH
-      - run: git push --quiet origin $CIRCLE_BRANCH
-      - run: git push --tags
+          name: Semantic Release 🚀
+          command: yarn semantic-release
 
   build:
     executor: default
@@ -120,34 +98,17 @@ jobs:
       - *attach_working_directory
       - run:
           name: Build
-          command: |
-            yarn build
+          command: yarn build
       - persist_to_workspace:
           root: *working_directory
           paths:
             - dist
             - node_modules
-            - netlify.toml
-
-  publish_packages:
-    executor: default
-    steps:
-      - checkout
-      - *attach_working_directory
-      - configure_git
-      - authenticate_with_registry
-      - run:
-          name: Publish package 🚀
-          command: |
-            yarn publish --registry https://creditas.jfrog.io/creditas/api/npm/npm/
 
 workflows:
   version: 2.1
 
-  build_test:
-    when:
-      and:
-        - equal: [main, << pipeline.git.branch >>]
+  build_test_release:
     jobs:
       - install_app:
           context: artifactory-dependency-install
@@ -156,60 +117,7 @@ workflows:
           requires:
             - install_app
 
-      - bump_version:
-          name: 'bump_version'
-          requires:
-            - build
-
-  build_test_preview:
-    unless:
-      and:
-        - equal: [main, << pipeline.git.branch >>]
-    jobs:
-      - install_app:
-          context: artifactory-dependency-install
-
-      - build:
-          requires:
-            - install_app
-
-      - bump_version:
-          name: 'bump_preview_version'
-          preview: true
-          requires:
-            - build
-
-  release:
-    jobs:
-      - install_app:
-          context: artifactory-dependency-install
-          filters:
-            tags:
-              only:
-                - /^v.*$/
-            branches:
-              ignore:
-                - /.*/
-
-      - build:
-          filters:
-            tags:
-              only:
-                - /^v.*$/
-            branches:
-              ignore:
-                - /.*/
-          requires:
-            - install_app
-
-      - publish_packages:
+      - semantic_release:
           context: artifactory-credentials
           requires:
             - build
-          filters:
-            tags:
-              only:
-                - /^v.*$/
-            branches:
-              ignore:
-                - /.*/
