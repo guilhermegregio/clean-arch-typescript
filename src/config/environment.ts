@@ -1,14 +1,14 @@
 export type EnvironmentSchema = {
-  baseUrl: string;
-};
+  baseUrl: string
+}
 
-type Keys = keyof EnvironmentSchema 
+type Keys = keyof EnvironmentSchema
 
 enum Environments {
   production = 'production',
   development = 'development',
   staging = 'staging',
-  proxy = 'proxy'
+  proxy = 'proxy',
 }
 
 const production: EnvironmentSchema = {
@@ -31,17 +31,19 @@ const environments = {
   [Environments.production]: production,
   [Environments.staging]: staging,
   [Environments.development]: development,
-  [Environments.proxy]: proxy
+  [Environments.proxy]: proxy,
 }
 
 let defaultEnv = Environments.development
 
-const setEnv = (environment:Environments, baseUrl:string)  => {
-  if (!Object.keys(environments).includes(environment)){
-    throw new Error ('Invalid environment. Try production, staging, development or proxy')
+const setEnv = (environment: Environments, baseUrl: string) => {
+  if (!Object.keys(environments).includes(environment)) {
+    throw new Error(
+      'Invalid environment. Try production, staging, development or proxy',
+    )
   }
 
-  defaultEnv = environment  
+  defaultEnv = environment
 
   if (environment === Environments.proxy && Boolean(baseUrl)) {
     environments[Environments.proxy].baseUrl = baseUrl

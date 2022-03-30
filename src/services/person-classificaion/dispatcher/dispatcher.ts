@@ -1,5 +1,5 @@
 import {pipe} from 'ramda'
-import {EventSchema, DispatchEvent} from './types'
+import {DispatchEvent} from './types'
 import {setCategory, setEvent} from './utils'
 
 const dispatchEvent: DispatchEvent = event => {
@@ -15,5 +15,4 @@ const dispatchPersonClassificationEvent: DispatchEvent = pipe(
   dispatchEvent,
 )
 
-export {dispatchEvent}
-
+export {dispatchEvent, dispatchPersonClassificationEvent}

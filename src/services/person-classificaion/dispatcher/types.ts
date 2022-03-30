@@ -7,4 +7,3 @@ export interface EventSchema {
 }
 
 export type DispatchEvent = (eventData: EventSchema) => EventSchema
-

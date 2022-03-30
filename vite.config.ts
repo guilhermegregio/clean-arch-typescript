@@ -1,9 +1,8 @@
 import {resolve} from 'node:path'
 import {defineConfig} from 'vite'
 import dts from 'vite-plugin-dts'
-import {EsLinter, linterPlugin} from 'vite-plugin-linter'
 
-export default defineConfig(configEnv => ({
+export default defineConfig(() => ({
   build: {
     lib: {
       entry: resolve('src', 'main.ts'),
@@ -16,11 +15,5 @@ export default defineConfig(configEnv => ({
       },
     },
   },
-  plugins: [
-    linterPlugin({
-      include: ['./src}/**/*.{ts,tsx}'],
-      linters: [new EsLinter({configEnv})],
-    }),
-    dts(),
-  ],
+  plugins: [dts()],
 }))

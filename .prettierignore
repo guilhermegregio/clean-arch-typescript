@@ -1,6 +1,9 @@
-dist
-node_modules
+.gitignore
+.prettierignore
+LICENSE
 coverage
-.next
-build
-*.hbs
+public
+dist
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
