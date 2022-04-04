@@ -61,6 +61,36 @@ commands:
           name: Install project dependencies 📦
           command: yarn install --frozen-lockfile
 
+  lint:
+    steps:
+      - run:
+          name: Lint
+          command: yarn lint
+
+  test:
+    steps:
+      - run:
+          name: Test
+          command: yarn test:ci
+
+  check_format:
+    steps:
+      - run:
+          name: Check Format
+          command: yarn check-format
+
+  check_types:
+    steps:
+      - run:
+          name: Check Types
+          command: yarn check-types
+
+  build:
+    steps:
+      - run:
+          name: Build
+          command: yarn build
+
 jobs:
   install_app:
     executor: default
@@ -91,14 +121,40 @@ jobs:
           name: Semantic Release 🚀
           command: yarn semantic-release
 
+  lint:
+    executor: default
+    steps:
+      - checkout
+      - *attach_working_directory
+      - lint
+
+  check_format:
+    executor: default
+    steps:
+      - checkout
+      - *attach_working_directory
+      - check_format
+
+  check_types:
+    executor: default
+    steps:
+      - checkout
+      - *attach_working_directory
+      - check_types
+
+  test:
+    executor: default
+    steps:
+      - checkout
+      - *attach_working_directory
+      - test
+
   build:
     executor: default
     steps:
       - checkout
       - *attach_working_directory
-      - run:
-          name: Build
-          command: yarn build
+      - build
       - persist_to_workspace:
           root: *working_directory
           paths:
@@ -113,6 +169,22 @@ workflows:
       - install_app:
           context: artifactory-dependency-install
 
+      - lint:
+          requires:
+            - install_app
+
+      - check_format:
+          requires:
+            - install_app
+
+      - check_types:
+          requires:
+            - install_app
+
+      - test:
+          requires:
+            - install_app
+
       - build:
           requires:
             - install_app
@@ -120,4 +192,8 @@ workflows:
       - semantic_release:
           context: artifactory-credentials
           requires:
+            - lint
+            - check_format
+            - check_types
+            - test
             - build
