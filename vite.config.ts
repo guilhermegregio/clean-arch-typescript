@@ -6,8 +6,8 @@ export default defineConfig(() => ({
   build: {
     lib: {
       entry: resolve('src', 'main.ts'),
-      name: 'PersonClassification',
-      fileName: format => `person-classification.${format}.js`,
+      name: 'CleanArchTypescript',
+      fileName: format => `clean-arch-typescript.${format}.js`,
     },
     rollupOptions: {
       output: {

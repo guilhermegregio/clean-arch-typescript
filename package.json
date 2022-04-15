@@ -1,9 +1,9 @@
 {
-  "name": "@creditas/person-classification",
+  "name": "@gregio/clean-arch-typescript",
   "version": "0.0.0-development",
-  "repository": "git@github.com:Creditas/person-classification-frontend-sdk.git",
-  "author": "Guilherme Mangabeira Gregio <guilherme.gregio@creditas.com.br>",
-  "license": "UNLICENSED",
+  "repository": "git@github.com:guilhermegregio/clean-arch-typescript.git",
+  "author": "Guilherme Mangabeira Gregio <guilherme@gregio.net>",
+  "license": "MIT",
   "scripts": {
     "build": "vite build",
     "semantic-release": "semantic-release",
@@ -23,12 +23,12 @@
   ],
   "types": "./dist/main.d.ts",
   "typings": "dist/main.d.ts",
-  "main": "./dist/person-classification.umd.js",
-  "module": "./dist/person-classification.es.js",
+  "main": "./dist/clean-arch-typescript.umd.js",
+  "module": "./dist/clean-arch-typescript.es.js",
   "exports": {
     ".": {
-      "import": "./dist/person-classification.es.js",
-      "require": "./dist/person-classification.umd.js"
+      "import": "./dist/clean-arch-typescript.es.js",
+      "require": "./dist/clean-arch-typescript.umd.js"
     }
   },
   "publishConfig": {
