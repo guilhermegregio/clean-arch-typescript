@@ -5,6 +5,7 @@
   "author": "Guilherme Mangabeira Gregio <guilherme@gregio.net>",
   "license": "MIT",
   "scripts": {
+    "log": "echo $GH_TOKEN && echo $NPM_TOKEN",
     "build": "vite build",
     "semantic-release": "semantic-release",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
