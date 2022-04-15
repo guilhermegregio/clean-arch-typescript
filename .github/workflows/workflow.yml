@@ -17,11 +17,6 @@ jobs:
       - run: yarn check-format
       - run: yarn check-types
       - run: yarn test:ci
-      - name: Log
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        run: yarn log
       - name: Release
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
