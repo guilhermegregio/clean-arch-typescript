@@ -33,6 +33,7 @@ module.exports = {
         ],
       },
     ],
+    '@typescript-eslint/no-explicit-any': 0,
     '@typescript-eslint/indent': 'off',
     '@typescript-eslint/no-use-before-define': [
       'error',
