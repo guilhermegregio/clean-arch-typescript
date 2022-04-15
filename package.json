@@ -33,7 +33,7 @@
     }
   },
   "publishConfig": {
-    "access": "restricted"
+    "access": "public"
   },
   "devDependencies": {
     "@commitlint/cli": "^16.2.3",
