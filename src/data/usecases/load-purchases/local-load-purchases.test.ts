@@ -45,36 +45,39 @@ describe('LocalLoadPurchases.loadAll()', () => {
   })
 
   describe('when cache is valid', () => {
-    let cacheStore: CacheStoreSpy, sut: LocalLoadPurchases
+    let instance: SutTypes
 
     beforeEach(() => {
       const currentDate = new Date()
       const timestamp = getCacheExpirationDate(currentDate)
       timestamp.setSeconds(timestamp.getSeconds() + 1)
-      const result = makeSut(currentDate)
+      instance = makeSut(currentDate)
 
-      cacheStore = result.cacheStore
-      sut = result.sut
-
-      cacheStore.fetchResult = {
+      instance.cacheStore.fetchResult = {
         timestamp,
         value: mockPurchases(),
       }
     })
 
     test('returns list of purchases', async () => {
+      const {sut, cacheStore} = instance
+
       const purchases = await sut.loadAll()
 
       expect(purchases).toEqual(cacheStore.fetchResult.value)
     })
 
     test('calls cache fetch with correct key', async () => {
+      const {sut, cacheStore} = instance
+
       await sut.loadAll()
 
       expect(cacheStore.fetchKey).toBe('purchases')
     })
 
     test('calls cache fetch', async () => {
+      const {sut, cacheStore} = instance
+
       await sut.loadAll()
 
       expect(cacheStore.actions).toEqual([CacheStoreSpyActions.fetch])
@@ -82,36 +85,39 @@ describe('LocalLoadPurchases.loadAll()', () => {
   })
 
   describe('when cache is empty', () => {
-    let cacheStore: CacheStoreSpy, sut: LocalLoadPurchases
+    let instance: SutTypes
 
     beforeEach(() => {
       const currentDate = new Date()
       const timestamp = getCacheExpirationDate(currentDate)
       timestamp.setSeconds(timestamp.getSeconds() + 1)
-      const result = makeSut(currentDate)
+      instance = makeSut(currentDate)
 
-      cacheStore = result.cacheStore
-      sut = result.sut
-
-      cacheStore.fetchResult = {
+      instance.cacheStore.fetchResult = {
         timestamp,
         value: [],
       }
     })
 
     test('returns an empty list', async () => {
+      const {sut, cacheStore} = instance
+
       const purchases = await sut.loadAll()
 
       expect(purchases).toEqual(cacheStore.fetchResult.value)
     })
 
     test('calls cache fetch', async () => {
+      const {sut, cacheStore} = instance
+
       await sut.loadAll()
 
       expect(cacheStore.actions).toEqual([CacheStoreSpyActions.fetch])
     })
 
     test('calls cache fetch with correct key', async () => {
+      const {sut, cacheStore} = instance
+
       await sut.loadAll()
 
       expect(cacheStore.fetchKey).toBe('purchases')
@@ -119,36 +125,39 @@ describe('LocalLoadPurchases.loadAll()', () => {
   })
 
   describe('when cache is expired', () => {
-    let cacheStore: CacheStoreSpy, sut: LocalLoadPurchases
+    let instance: SutTypes
 
     beforeEach(() => {
       const currentDate = new Date()
       const timestamp = getCacheExpirationDate(currentDate)
       timestamp.setSeconds(timestamp.getSeconds() - 1)
-      const result = makeSut(currentDate)
+      instance = makeSut(currentDate)
 
-      cacheStore = result.cacheStore
-      sut = result.sut
-
-      cacheStore.fetchResult = {
+      instance.cacheStore.fetchResult = {
         timestamp,
         value: [],
       }
     })
 
     test('returns an empty list', async () => {
+      const {sut, cacheStore} = instance
+
       const purchases = await sut.loadAll()
 
       expect(purchases).toEqual([])
     })
 
     test('calls cache fetch', async () => {
+      const {sut, cacheStore} = instance
+
       await sut.loadAll()
 
       expect(cacheStore.actions).toEqual([CacheStoreSpyActions.fetch])
     })
 
     test('calls cache fetch with correct key', async () => {
+      const {sut, cacheStore} = instance
+
       await sut.loadAll()
 
       expect(cacheStore.fetchKey).toBe('purchases')
@@ -156,35 +165,38 @@ describe('LocalLoadPurchases.loadAll()', () => {
   })
 
   describe('when cache is on expiration date', () => {
-    let cacheStore: CacheStoreSpy, sut: LocalLoadPurchases
+    let instance: SutTypes
 
     beforeEach(() => {
       const currentDate = new Date()
       const timestamp = getCacheExpirationDate(currentDate)
-      const result = makeSut(currentDate)
+      instance = makeSut(currentDate)
 
-      cacheStore = result.cacheStore
-      sut = result.sut
-
-      cacheStore.fetchResult = {
+      instance.cacheStore.fetchResult = {
         timestamp,
         value: mockPurchases(),
       }
     })
 
     test('returns an empty list', async () => {
+      const {sut} = instance
+
       const purchases = await sut.loadAll()
 
       expect(purchases).toEqual([])
     })
 
     test('calls cache fetch', async () => {
+      const {sut, cacheStore} = instance
+
       await sut.loadAll()
 
       expect(cacheStore.actions).toEqual([CacheStoreSpyActions.fetch])
     })
 
     test('calls cache fetch with correct key', async () => {
+      const {sut, cacheStore} = instance
+
       await sut.loadAll()
 
       expect(cacheStore.fetchKey).toBe('purchases')

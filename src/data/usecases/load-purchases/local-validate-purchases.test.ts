@@ -16,69 +16,128 @@ const makeSut = (timestamp = new Date()): SutTypes => {
   return {sut, cacheStore}
 }
 
-describe('LocalLoadPurchases', () => {
+describe('LocalLoadPurchases.validate()', () => {
   test('does not delete or insert cache on init', () => {
     const {cacheStore} = makeSut()
 
     expect(cacheStore.actions).toEqual([])
   })
 
-  test('deletes cache if load fails', () => {
-    const {cacheStore, sut} = makeSut()
-    cacheStore.simulateFetchError()
+  describe('when load fails', () => {
+    let instance: SutTypes
 
-    sut.validate()
+    beforeEach(() => {
+      instance = makeSut()
+      instance.cacheStore.simulateFetchError()
+    })
 
-    expect(cacheStore.actions).toEqual([
-      CacheStoreSpyActions.fetch,
-      CacheStoreSpyActions.delete,
-    ])
-    expect(cacheStore.deleteKey).toBe('purchases')
+    test('deletes cache', () => {
+      const {cacheStore, sut} = instance
+
+      sut.validate()
+
+      expect(cacheStore.deleteKey).toBe('purchases')
+    })
+
+    test('calls cache fetch and delete', () => {
+      const {cacheStore, sut} = instance
+
+      sut.validate()
+
+      expect(cacheStore.actions).toEqual([
+        CacheStoreSpyActions.fetch,
+        CacheStoreSpyActions.delete,
+      ])
+    })
   })
 
-  test('has no side effect if load succeeds', () => {
-    const currentDate = new Date()
-    const timestamp = getCacheExpirationDate(currentDate)
-    timestamp.setSeconds(timestamp.getSeconds() + 1)
-    const {cacheStore, sut} = makeSut(currentDate)
-    cacheStore.fetchResult = {timestamp}
+  describe('when load succeeds', () => {
+    let instance: SutTypes
 
-    sut.validate()
+    beforeEach(() => {
+      instance = makeSut()
+      const currentDate = new Date()
+      const timestamp = getCacheExpirationDate(currentDate)
+      timestamp.setSeconds(timestamp.getSeconds() + 1)
+      instance = makeSut(currentDate)
+      instance.cacheStore.fetchResult = {timestamp}
+    })
 
-    expect(cacheStore.actions).toEqual([CacheStoreSpyActions.fetch])
-    expect(cacheStore.fetchKey).toBe('purchases')
+    test('has no side effect', () => {
+      const {cacheStore, sut} = instance
+
+      sut.validate()
+
+      expect(cacheStore.actions).toEqual([CacheStoreSpyActions.fetch])
+    })
+
+    test('calls cache fetch with correct key', () => {
+      const {cacheStore, sut} = instance
+
+      sut.validate()
+
+      expect(cacheStore.fetchKey).toBe('purchases')
+    })
   })
 
-  test('deletes cache if its expired', () => {
-    const currentDate = new Date()
-    const timestamp = getCacheExpirationDate(currentDate)
-    timestamp.setSeconds(timestamp.getSeconds() - 1)
-    const {cacheStore, sut} = makeSut(currentDate)
-    cacheStore.fetchResult = {timestamp}
+  describe('when cache expired', () => {
+    let instance: SutTypes
 
-    sut.validate()
+    beforeEach(() => {
+      const currentDate = new Date()
+      const timestamp = getCacheExpirationDate(currentDate)
+      timestamp.setSeconds(timestamp.getSeconds() - 1)
+      instance = makeSut(currentDate)
+      instance.cacheStore.fetchResult = {timestamp}
+    })
 
-    expect(cacheStore.actions).toEqual([
-      CacheStoreSpyActions.fetch,
-      CacheStoreSpyActions.delete,
-    ])
-    expect(cacheStore.fetchKey).toBe('purchases')
-    expect(cacheStore.deleteKey).toBe('purchases')
+    test('deletes cache', () => {
+      const {cacheStore, sut} = instance
+
+      sut.validate()
+
+      expect(cacheStore.actions).toEqual([
+        CacheStoreSpyActions.fetch,
+        CacheStoreSpyActions.delete,
+      ])
+    })
+
+    test('calls delete with correct key', () => {
+      const {cacheStore, sut} = instance
+
+      sut.validate()
+
+      expect(cacheStore.deleteKey).toBe('purchases')
+    })
   })
 
-  test('deletes cache if its on expiration date', () => {
-    const currentDate = new Date()
-    const timestamp = getCacheExpirationDate(currentDate)
-    const {cacheStore, sut} = makeSut(currentDate)
-    cacheStore.fetchResult = {timestamp}
+  describe('when cache its on expiration date', () => {
+    let instance: SutTypes
 
-    sut.validate()
+    beforeEach(() => {
+      const currentDate = new Date()
+      const timestamp = getCacheExpirationDate(currentDate)
+      instance = makeSut(currentDate)
+      instance.cacheStore.fetchResult = {timestamp}
+    })
 
-    expect(cacheStore.actions).toEqual([
-      CacheStoreSpyActions.fetch,
-      CacheStoreSpyActions.delete,
-    ])
-    expect(cacheStore.fetchKey).toBe('purchases')
-    expect(cacheStore.deleteKey).toBe('purchases')
+    test('deletes cache', () => {
+      const {cacheStore, sut} = instance
+
+      sut.validate()
+
+      expect(cacheStore.actions).toEqual([
+        CacheStoreSpyActions.fetch,
+        CacheStoreSpyActions.delete,
+      ])
+    })
+
+    test('calls delete with correct key', () => {
+      const {cacheStore, sut} = instance
+
+      sut.validate()
+
+      expect(cacheStore.deleteKey).toBe('purchases')
+    })
   })
 })
