@@ -1,0 +1,19 @@
+name: CI
+on: push
+jobs:
+  test:
+    runs-on: ubuntu-16.04
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          cache: 'yarn'
+      - run: yarn lint
+      - run: yarn check-format
+      - run: yarn check-types
+      - run: yarn test
+      - name: Release
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: yarn semantic-release
