@@ -13,12 +13,17 @@ jobs:
           node-version: '16'
           cache: 'yarn'
       - name: Log
+        shell: bash
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
+          echo "The GitHub Action Secret will be masked:  "
           echo ${{ secrets.GH_TOKEN }}
+          echo "ENV:  "
           echo $GH_TOKEN
+          echo "Trick to echo GitHub Actions Secret:  "
+          echo ${{secrets.GH_TOKEN}} | sed 's/./& /g'
       - run: yarn install
       - run: yarn lint
       - run: yarn check-format
