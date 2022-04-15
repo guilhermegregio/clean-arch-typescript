@@ -17,3 +17,7 @@ jobs:
       - run: yarn check-format
       - run: yarn check-types
       - run: yarn test:ci
+      - name: Release
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: yarn semantic-release
