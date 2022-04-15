@@ -1,6 +1,7 @@
 import {resolve} from 'node:path'
 import {defineConfig} from 'vite'
 import dts from 'vite-plugin-dts'
+import {ViteAliases} from 'vite-aliases'
 
 export default defineConfig(() => ({
   build: {
@@ -15,5 +16,5 @@ export default defineConfig(() => ({
       },
     },
   },
-  plugins: [dts()],
+  plugins: [ViteAliases(), dts()],
 }))
